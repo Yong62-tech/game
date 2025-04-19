@@ -1,49 +1,27 @@
 // ========== 游戏核心对象 ==========
-let player;
-let bullets = [];
-let enemies = [];
-let score = 0;
-let gameOver = false;
-let enemySpeed = 2;
-let lastEnemySpawn = 0;
+let player, bullets = [], enemies = [], score = 0;
+let gameOver = false, enemySpeed = 2, lastEnemySpawn = 0;
 
-// ========== 玩家控制类 ==========
-class Player {
-  constructor() {
-    this.w = 60;
-    this.h = 20;
-    this.x = width/2 - this.w/2;
-    this.y = height - 60;
-    this.dir = 0;
-    this.speed = 7;
-  }
+// ========== 音效系统 ==========
+let shootSound, hitSound;
+let audioEnabled = false;
 
-  update() {
-    this.x += this.dir * this.speed;
-    this.x = constrain(this.x, 0, width - this.w);
-  }
-
-  show() {
-    push();
-    translate(this.x + this.w/2, this.y + this.h/2);
-    noStroke();
-    fill(80, 200, 255, 220);
-    ellipse(0, 0, this.w, this.h*1.2);
-    fill(255, 255, 255, 180);
-    ellipse(0, -5, this.w*0.5, this.h*0.7);
-    pop();
-  }
-
-  setDir(dir) {
-    this.dir = dir;
-  }
-}
-
-// ========== 初始化游戏 ==========
 function setup() {
   createCanvas(480, 640);
   player = new Player();
-  frameRate(60);
+  
+  // 初始化音效（Base64编码的短音效）
+  shootSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...");
+  hitSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...");
+  
+  // 绑定音效按钮
+  document.getElementById('audio-btn').onclick = () => {
+    shootSound.play().then(() => {
+      shootSound.pause();
+      audioEnabled = true;
+      document.getElementById('audio-btn').remove();
+    });
+  };
 }
 
 // ========== 游戏主循环 ==========
@@ -51,7 +29,6 @@ function draw() {
   background(20, 25, 40);
   
   if (!gameOver) {
-    // 更新玩家状态
     player.update();
     player.show();
 
@@ -62,55 +39,78 @@ function draw() {
     }
 
     // 更新敌人状态
-    enemies.forEach((enemy, index) => {
-      enemy.update();
-      enemy.show();
-      if (enemy.y > height - 40) gameOver = true;
-    });
+    for (let i = enemies.length - 1; i >= 0; i--) {
+      enemies[i].update();
+      enemies[i].show();
+      
+      // 碰撞检测
+      for (let j = bullets.length - 1; j >= 0; j--) {
+        if (dist(enemies[i].x, enemies[i].y, bullets[j].x, bullets[j].y) < enemies[i].r + bullets[j].r) {
+          if (audioEnabled) playHitSound();
+          enemies.splice(i, 1);
+          bullets.splice(j, 1);
+          score++;
+          break;
+        }
+      }
+      
+      if (enemies[i] && enemies[i].y > height - 40) gameOver = true;
+    }
 
     // 显示得分
     fill(255);
     textSize(22);
-    textAlign(LEFT, TOP);
     text("得分: " + score, 20, 20);
   } else {
     fill(255, 0, 0);
     textSize(36);
     textAlign(CENTER, CENTER);
-    text("游戏结束", width/2, height/2);
+    text("游戏结束\n按R键重玩", width/2, height/2);
   }
 }
 
-// ========== 敌人控制类 ==========
+// ========== 控制类 ==========
+class Player {
+  constructor() {
+    this.w = 60;
+    this.h = 20;
+    this.x = width/2 - this.w/2;
+    this.y = height - 60;
+    this.dir = 0;
+    this.speed = 7;
+  }
+  update() { 
+    this.x += this.dir * this.speed;
+    this.x = constrain(this.x, 0, width - this.w);
+  }
+  show() {
+    fill(80, 200, 255);
+    rect(this.x, this.y, this.w, this.h);
+  }
+  setDir(dir) { this.dir = dir; }
+}
+
 class Enemy {
   constructor() {
     this.r = random(20, 30);
     this.x = random(this.r, width - this.r);
     this.y = -this.r;
-    this.speed = enemySpeed + random(-0.5, 0.5);
+    this.speed = enemySpeed;
   }
-
-  update() {
-    this.y += this.speed;
-  }
-
-  show() {
-    fill(255, 100, 100);
-    noStroke();
-    ellipse(this.x, this.y, this.r*2, this.r*2);
-  }
+  update() { this.y += this.speed; }
+  show() { fill(255, 100, 100); ellipse(this.x, this.y, this.r*2); }
 }
 
 // ========== 事件监听 ==========
 function keyPressed() {
   if (keyCode === LEFT_ARROW) player.setDir(-1);
   if (keyCode === RIGHT_ARROW) player.setDir(1);
+  if (key === ' ') bullets.push(new Bullet(player.x + player.w/2, player.y));
+  if (gameOver && key === 'R') resetGame();
 }
 
 function keyReleased() {
-  if (keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
-    player.setDir(0);
-  }
+  if (keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) player.setDir(0);
 }
 
 // ========== 触控支持 ==========
@@ -118,7 +118,8 @@ let lastTouchX = null;
 
 function touchStarted() {
   lastTouchX = mouseX;
-  return false; // 阻止默认滚动行为
+  bullets.push(new Bullet(player.x + player.w/2, player.y));
+  return false;
 }
 
 function touchMoved() {
@@ -128,4 +129,22 @@ function touchMoved() {
     lastTouchX = mouseX;
   }
   return false;
+}
+
+// ========== 辅助函数 ==========
+function resetGame() {
+  score = 0;
+  bullets = [];
+  enemies = [];
+  gameOver = false;
+}
+
+function playShootSound() {
+  shootSound.currentTime = 0;
+  shootSound.play();
+}
+
+function playHitSound() {
+  hitSound.currentTime = 0;
+  hitSound.play();
 }
