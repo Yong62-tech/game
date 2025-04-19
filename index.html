@@ -3,56 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=480, initial-scale=1.0">
-  <title>炫酷射击游戏</title>
+  <title>炫酷射击游戏 - p5.js</title>
   <style>
     body { 
       background: #111; 
+      color: #fff; 
       margin: 0; 
-      overflow: hidden;
-      touch-action: manipulation; /* 优化触控响应 */
+      font-family: Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-    #defaultCanvas0 {
-      display: block;
+    #defaultCanvas0 { 
+      display: block; 
       margin: 0 auto;
     }
-    #unlock-audio {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 4px;
-      z-index: 100;
-      font-family: Arial;
-    }
-    .instructions {
-      position: absolute;
-      top: 50px;
-      left: 0;
-      right: 0;
-      color: #4fc3f7;
-      text-align: center;
-      font-size: 14px;
-      pointer-events: none;
+    .title { 
+      text-align: center; 
+      font-size: 2.2em; 
+      margin-top: 20px; 
+      letter-spacing: 2px;
     }
   </style>
 </head>
 <body>
-  <button id="unlock-audio">点击解锁音效</button>
-  <div class="instructions">← → 移动 | 空格/点击射击 | 击落敌人得分</div>
+  <div class="title">炫酷射击游戏 - p5.js</div>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <!-- 修正1：正确的p5.js CDN链接 -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+  
+  <!-- 修正2：正确的脚本文件名 -->
   <script src="sketch.js"></script>
-  
-  <script>
-    // 强制用户点击按钮激活音效（兼容所有浏览器）
-    document.getElementById('unlock-audio').onclick = function() {
-      if (typeof enableAudio === 'function') enableAudio();
-      this.textContent = "音效已就绪 ✓";
-      setTimeout(() => this.remove(), 1000);
-    };
-  </script>
 </body>
 </html>
