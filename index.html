@@ -9,8 +9,8 @@
       background: #111; 
       color: #fff; 
       margin: 0; 
-      font-family: 'Segoe UI', Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
+      font-family: Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
     }
     #defaultCanvas0 { 
       display: block; 
@@ -27,9 +27,9 @@
 <body>
   <div class="title">炫酷射击游戏 - p5.js</div>
   
-  <!-- 使用稳定版CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
+  <!-- 使用稳定的 p5.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+  <!-- 移除 p5.sound，改用 HTML5 Audio -->
   <script src="sketch.js"></script>
 </body>
 </html>
