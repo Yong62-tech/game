@@ -3,43 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=480, initial-scale=1.0">
-  <title>炫酷射击游戏 - p5.js</title>
+  <title>炫酷射击游戏</title>
   <style>
     body { 
       background: #111; 
-      color: #fff; 
       margin: 0; 
-      font-family: Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
+      overflow: hidden;
+      touch-action: manipulation; /* 优化触控响应 */
     }
-    #defaultCanvas0 { 
-      display: block; 
+    #defaultCanvas0 {
+      display: block;
       margin: 0 auto;
     }
-    .title { 
-      text-align: center; 
-      font-size: 2.2em; 
-      margin-top: 20px; 
-      letter-spacing: 2px;
+    #unlock-audio {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      z-index: 100;
+      font-family: Arial;
+    }
+    .instructions {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      right: 0;
+      color: #4fc3f7;
+      text-align: center;
+      font-size: 14px;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div class="title">炫酷射击游戏 - p5.js</div>
+  <button id="unlock-audio">点击解锁音效</button>
+  <div class="instructions">← → 移动 | 空格/点击射击 | 击落敌人得分</div>
   
-  <!-- 使用稳定的 p5.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
-  <!-- 移除 p5.sound，改用 HTML5 Audio -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
   <script src="sketch.js"></script>
-
-<button id="unlock-audio" style="position:fixed; top:10px; left:10px; z-index:100;">
-  点击解锁音效
-</button>
-<script>
-  document.getElementById('unlock-audio').onclick = function() {
-    enableAudio();
-    this.remove();
-  };
-</script>
+  
+  <script>
+    // 强制用户点击按钮激活音效（兼容所有浏览器）
+    document.getElementById('unlock-audio').onclick = function() {
+      if (typeof enableAudio === 'function') enableAudio();
+      this.textContent = "音效已就绪 ✓";
+      setTimeout(() => this.remove(), 1000);
+    };
+  </script>
 </body>
 </html>
