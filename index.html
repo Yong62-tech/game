@@ -22,15 +22,24 @@
       margin-top: 20px; 
       letter-spacing: 2px;
     }
+    #audio-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #4CAF50;
+      color: white;
+      padding: 8px;
+      border: none;
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
+  <button id="audio-btn">点击激活音效</button>
   <div class="title">炫酷射击游戏 - p5.js</div>
   
-  <!-- 修正1：正确的p5.js CDN链接 -->
+  <!-- 使用正确的CDN链接 -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
-  
-  <!-- 修正2：正确的脚本文件名 -->
   <script src="sketch.js"></script>
 </body>
 </html>
