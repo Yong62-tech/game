@@ -31,5 +31,15 @@
   <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
   <!-- 移除 p5.sound，改用 HTML5 Audio -->
   <script src="sketch.js"></script>
+
+<button id="unlock-audio" style="position:fixed; top:10px; left:10px; z-index:100;">
+  点击解锁音效
+</button>
+<script>
+  document.getElementById('unlock-audio').onclick = function() {
+    enableAudio();
+    this.remove();
+  };
+</script>
 </body>
 </html>
